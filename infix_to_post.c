@@ -1,0 +1,106 @@
+#include<stdio.h>
+#include<string.h>
+int valTop=-1;
+int opTop=-1;
+char opStack[50];
+char valStack[50][100];
+int size=50;
+void pushVal(char value[]){
+	if(valTop==size-1){
+		printf("The stack is full");
+		
+	}
+	else{
+		strcpy(valStack[++valTop],value);
+	}
+}
+void pushOp(char op){
+	if(opTop==size-1){
+		printf("The stack is full");
+		
+	}
+	else{
+		opStack[++opTop]=op;
+	}
+}
+char* popVal(){
+	if(valTop==-1){
+		printf("The stack is empty ");
+		return  " ";
+	}
+	else{
+		return valStack[valTop--];
+	}
+	
+	}
+	char popOp(){
+		if(opTop==-1){
+			printf("The stack is empty");
+			return '\0';
+		}
+		else{
+			return opStack[opTop--];
+		}
+	}
+	int priority(char op){
+		if(op=='+'|| op =='-')
+			return 1;
+		if(op=='*'|| op=='/')
+			return 2;
+			
+			return 0;
+	}
+void infix_to_postfix(){
+	char result[100];
+	char v1[100];
+	char v2[100];
+	char op;
+	strcpy(v2,popVal());
+	strcpy(v1,popVal());
+	op=popOp();
+	sprintf(result,"%s%s%c",v1,v2,op);
+	pushVal(result);
+}
+int main(){
+	printf("\t\t\t\t\t=======INFIX TO POSTFIX CONVERSION==========\n\n");
+	char exp[100];
+	printf("Enter the infix expression you want to convert to postfix");
+	scanf("%s", exp);
+	for(int i=0;exp[i]!='\0';i++){
+		char ch=exp[i];
+		if(ch>='0' && ch<='9'){
+			char temp[2]={ch,'\0'};
+			pushVal(temp);
+		}
+		else if(ch==')'){
+			while(opStack[opTop]!='('){
+				infix_to_postfix();
+			}
+			popOp();
+			
+		}
+		else{
+			if(opTop==-1||ch =='('|| opStack[opTop]=='('){
+				pushOp(ch);
+			}
+			else{
+				while(opTop!=-1&& priority(opStack[opTop])>=priority(ch)){
+					infix_to_postfix();
+				}
+				pushOp(ch);
+			}
+		}
+	}
+	while(opTop !=-1){
+		infix_to_postfix();
+	}
+	char*final_result=popVal();
+	printf("\nPostfix expression:%s",final_result);
+	return 0;
+					
+				
+			
+		
+	
+
+}
